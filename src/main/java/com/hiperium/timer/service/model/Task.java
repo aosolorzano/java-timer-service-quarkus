@@ -1,8 +1,10 @@
 package com.hiperium.timer.service.model;
 
+import com.hiperium.timer.service.annotations.ColumnName;
+import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,28 +20,29 @@ public class Task {
     private String name;
     private Integer hour;
     private Integer minute;
-    private List<Integer> daysOfWeek;
+    private List<String> daysOfWeek;
     private String executionCommand;
+    private ZonedDateTime executeUntil;
     private String description;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime updatedAt;
 
     public Task() {
-        this.createdAt = Instant.now();
+        // Nothing to implement
     }
 
-    public Task(String id, String name, Integer hour, Integer minute, List<Integer> daysOfWeek,
-                String executionCommand, String description) {
-        this.id = id;
+    public Task(String name, Integer hour, Integer minute, List<String> daysOfWeek,
+                String executionCommand, ZonedDateTime executeUntil, String description) {
         this.name = name;
         this.hour = hour;
         this.minute = minute;
         this.daysOfWeek = daysOfWeek;
         this.executionCommand = executionCommand;
+        this.executeUntil = executeUntil;
         this.description = description;
-        this.createdAt = Instant.now();
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_ID_COL)
     public String getId() {
         return id;
     }
@@ -48,6 +51,7 @@ public class Task {
         this.id = id;
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_NAME_COL)
     public String getName() {
         return name;
     }
@@ -56,6 +60,7 @@ public class Task {
         this.name = name;
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_EXEC_COMMAND_COL)
     public String getExecutionCommand() {
         return executionCommand;
     }
@@ -64,6 +69,16 @@ public class Task {
         this.executionCommand = executionCommand;
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_EXEC_UNTIL_COL)
+    public ZonedDateTime getExecuteUntil() {
+        return executeUntil;
+    }
+
+    public void setExecuteUntil(ZonedDateTime executeUntil) {
+        this.executeUntil = executeUntil;
+    }
+
+    @ColumnName(name = TaskColumnsEnum.TASK_HOUR_COL)
     public Integer getHour() {
         return hour;
     }
@@ -72,6 +87,7 @@ public class Task {
         this.hour = hour;
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_MINUTE_COL)
     public Integer getMinute() {
         return minute;
     }
@@ -80,14 +96,16 @@ public class Task {
         this.minute = minute;
     }
 
-    public List<Integer> getDaysOfWeek() {
+    @ColumnName(name = TaskColumnsEnum.TASK_DAYS_OF_WEEK_COL)
+    public List<String> getDaysOfWeek() {
         return daysOfWeek;
     }
 
-    public void setDaysOfWeek(List<Integer> daysOfWeek) {
+    public void setDaysOfWeek(List<String> daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_DESCRIPTION_COL)
     public String getDescription() {
         return description;
     }
@@ -96,19 +114,19 @@ public class Task {
         this.description = description;
     }
 
-    public Instant getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Instant updatedAt) {
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -134,6 +152,7 @@ public class Task {
                 ", minute=" + minute +
                 ", daysOfWeek=" + daysOfWeek +
                 ", executionCommand='" + executionCommand + '\'' +
+                ", executeUntil=" + executeUntil +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
