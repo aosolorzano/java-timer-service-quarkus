@@ -5,7 +5,6 @@ import com.hiperium.timer.service.services.TaskService;
 import com.hiperium.timer.service.utils.enums.TaskDaysEnum;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
-import org.quartz.SchedulerException;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -29,67 +28,71 @@ public class TaskResource {
     private static final Logger LOGGER = Logger.getLogger(TaskResource.class.getName());
 
     @Inject
-    TaskService service;
-
-    @GET
-    public Uni<List<Task>> findAllTasks() {
-        LOGGER.debug("findAllTasks() - START");
-        return service.findAllTasks();
-    }
-
-    @GET
-    @Path("{id}")
-    public Uni<Response> findTask(@PathParam("id") String id) {
-        LOGGER.debug("findTask() - START: " + id);
-        return service.findTask(id).onItem().ifNotNull()
-                .transform(entity -> Response.ok(entity).build());
-    }
+    TaskService taskService;
 
     @POST
-    public Uni<Response> addTask(Task task) throws SchedulerException {
-        LOGGER.debug("addTask() - START: " + task);
+    public Uni<Response> create(Task task) {
+        LOGGER.debug("create() - START: " + task);
         if (Objects.isNull(task) || Objects.nonNull(task.getId())) {
             throw new WebApplicationException(
                     "Resource was not set properly for this request.", BAD_REQUEST);
         }
-        return this.service.addTask(task).onItem()
-                .transform(response -> Response.ok(task).status(CREATED).build());
+        return this.taskService.create(task)
+                .map(createdTask -> Response.ok(createdTask).status(CREATED).build());
     }
 
     @PUT
     @Path("{id}")
-    public Uni<Response> updateTask(@PathParam("id") String id, Task updatedTask) {
-        LOGGER.debug("updateTask() - START: " + updatedTask);
-        if (Objects.isNull(id) || id.isEmpty() || Objects.isNull(updatedTask)) {
+    public Uni<Response> update(@PathParam("id") String id, Task task) {
+        LOGGER.debug("update() - START: " + task);
+        if (Objects.isNull(id) || id.isEmpty() || Objects.isNull(task)) {
             throw new WebApplicationException(
                     "Resource attributes was not set properly on the request.", BAD_REQUEST);
         }
-        return this.service.findTask(id).onItem()
-                .transformToUni(actualTask -> this.service.updateTask(actualTask, updatedTask))
-                .onItem().ifNotNull().transform(task -> Response.ok().build());
+        return this.taskService.find(id)
+                .flatMap(actualTask -> this.taskService.update(actualTask, task))
+                .map(updatedTask -> Response.ok().build());
     }
 
     @DELETE
     @Path("{id}")
-    public Uni<Response> deleteTask(@PathParam("id") String id) {
-        LOGGER.debug("deleteTask() - START: " + id);
+    public Uni<Response> delete(@PathParam("id") String id) {
+        LOGGER.debug("delete() - START: " + id);
         if (Objects.isNull(id) || id.isEmpty()) {
             throw new WebApplicationException(
                     "Resource ID was not set properly on the request.", BAD_REQUEST);
         }
-        return this.service.findTask(id).onItem()
-                .transformToUni(actualTask -> this.service.deleteTask(actualTask))
-                .onItem().ifNotNull().transform(task -> Response.ok().build());
+        return this.taskService.find(id)
+                .flatMap(actualTask -> this.taskService.delete(actualTask))
+                .map(task -> Response.ok().build());
+    }
+
+    @GET
+    @Path("{id}")
+    public Uni<Response> find(@PathParam("id") String id) {
+        LOGGER.debug("find() - START: " + id);
+        return taskService.find(id)
+                .map(entity -> Response.ok(entity).build());
+    }
+
+    @GET
+    public Uni<Response> findAll() {
+        LOGGER.debug("findAll() - START");
+        return taskService.findAll()
+                .map(entityList -> Response.ok(entityList).build());
     }
 
     @GET
     @Path("getJsonTemplate")
     public Response getJsonTemplate() {
         LOGGER.debug("getJsonTemplate() - START");
+        ZonedDateTime executeUntil = ZonedDateTime.now()
+                .plusYears(2).withMonth(12).withDayOfMonth(31)
+                .withHour(23).withMinute(59).withSecond(59).withNano(0);
         Task task = new Task("Task name", 10, 10,
                 List.of(TaskDaysEnum.TUE.name(), TaskDaysEnum.THU.name(), TaskDaysEnum.SAT.name()),
                 "Activate garbage collector robot.",
-                ZonedDateTime.now().plusYears(5),
+                executeUntil,
                 "Execute command to start the Task.");
         return Response.ok(task).build();
     }

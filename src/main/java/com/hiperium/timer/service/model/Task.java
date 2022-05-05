@@ -114,6 +114,7 @@ public class Task {
         this.description = description;
     }
 
+    // @ColumnName not applied here because 'createdAt' field is set manually in DynamoDB.
     public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
@@ -122,6 +123,7 @@ public class Task {
         this.createdAt = createdAt;
     }
 
+    @ColumnName(name = TaskColumnsEnum.TASK_UPDATED_AT_COL)
     public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }

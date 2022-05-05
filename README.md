@@ -1,11 +1,20 @@
-# java-timer-service-quarkus Project
+## What is it?
+This project uses Quarkus Framework to generate DRUD operations for Quartz jobs that are stored as Tasks records on AWS DynamoDB.
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Detailed project' architecture and components
+You can find more detail of the configurations and components coded in this project in the following post:
+[Reactive Timer Microservice with Java Quartz, DynamoDB and Quarkus](https://aosolorzano.medium.com/reactive-timer-microservice-with-java-quartz-dynamodb-and-quarkus-bb4cf6e0dc23).
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
+
+## Requirements
+1. An AWS account.
+2. [Git](https://git-scm.com/downloads).
+3. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+4. GraalVM with OpenJDK 17. You can use [SDK Man](https://sdkman.io/install).
+5. [Maven](https://maven.apache.org/download.cgi).
 
 ## Running the application in dev mode
-
 You can run your application in dev mode that enables live coding using:
 ```shell script
 ./mvnw compile quarkus:dev
@@ -14,7 +23,6 @@ You can run your application in dev mode that enables live coding using:
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
 ## Packaging and running the application
-
 The application can be packaged using:
 ```shell script
 ./mvnw package
@@ -32,7 +40,6 @@ If you want to build an _über-jar_, execute the following command:
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
 ## Creating a native executable
-
 You can create a native executable using: 
 ```shell script
 ./mvnw package -Pnative
@@ -48,14 +55,9 @@ You can then execute your native executable with: `./target/java-timer-service-q
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
 ## Related Guides
-
 - Amazon DynamoDB ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/amazon-dynamodb.html)): Connect to Amazon DynamoDB datastore
 - Quartz ([guide](https://quarkus.io/guides/quartz)): Schedule clustered tasks with Quartz
 
-## Provided Code
-
-### RESTEasy Reactive
-
+## RESTEasy Reactive
 Easily start your Reactive RESTful Web Services
-
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)

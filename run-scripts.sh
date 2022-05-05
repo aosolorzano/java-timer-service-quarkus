@@ -8,5 +8,5 @@ sh ./1_create-dynamodb-table.sh
 cd "$POC_WORKING_DIR" || { echo "Error moving to the working directory."; exit 1; }
 sh ./2_build-and-run-quarkus-app.sh
 
-cd "$POC_WORKING_DIR" || { echo "Error moving to the working directory."; exit 1; }
-sh ./3_build-and-run-quarkus-native-app.sh
+# cd "$POC_WORKING_DIR" || { echo "Error moving to the working directory."; exit 1; }
+# sh ./3_build-and-run-quarkus-native-app.sh

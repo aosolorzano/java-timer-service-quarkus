@@ -16,22 +16,26 @@ import java.util.Calendar;
 public final class TaskJobUtil {
 
     private static final Logger LOGGER = Logger.getLogger(TaskJobUtil.class.getName());
+    public static final String TASK_JOBS_GROUP = "Task#JobsGroup";
+    public static final String TASK_TRIGGERS_GROUP = "Task#TriggersGroup";
+    public static final String TASK_ID_DATA_KEY = "taskId";
+    public static final String TASK_COMMAND_DATA_KEY = "taskCommand";
 
     private TaskJobUtil() {
     }
 
     public static JobDetail getJobDetailFromTask(Task task) {
         return JobBuilder.newJob(TaskJob.class)
-                .withIdentity(task.getId(), "Job#Task#")
-                .usingJobData(TaskJob.TASK_ID_DATA_KEY, task.getId())
-                .usingJobData(TaskJob.TASK_COMMAND_DATA_KEY, task.getExecutionCommand())
+                .withIdentity(task.getId(), TASK_JOBS_GROUP)
+                .usingJobData(TASK_ID_DATA_KEY, task.getId())
+                .usingJobData(TASK_COMMAND_DATA_KEY, task.getExecutionCommand())
                 .build();
     }
 
     public static CronTrigger getTriggerFromTask(Task task, String zoneId) {
         LOGGER.debug("getTriggerFromTask() - zone ID: " + zoneId);
         TriggerBuilder<CronTrigger> triggerBuilder = TriggerBuilder.newTrigger()
-                .withIdentity(task.getId(), "Trigger#Task#")
+                .withIdentity(task.getId(), TASK_TRIGGERS_GROUP)
                 .startNow()
                 .withSchedule(
                         CronScheduleBuilder.atHourAndMinuteOnGivenDaysOfWeek(

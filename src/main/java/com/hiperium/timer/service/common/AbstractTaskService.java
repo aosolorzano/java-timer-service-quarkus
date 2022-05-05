@@ -24,8 +24,7 @@ public abstract class AbstractTaskService {
     private static final HashMap<String, AttributeValue> TASK_ITEM_KEY = new HashMap<>();
 
     @ConfigProperty(name = "task.time.zone.id")
-    protected
-    String zoneId;
+    protected String zoneId;
 
     protected ScanRequest getScanRequest() {
         return ScanRequest.builder()
@@ -48,13 +47,13 @@ public abstract class AbstractTaskService {
     protected PutItemRequest getPutItemRequest(Task task) {
         LOGGER.debug("getPutItemRequest() - START: " + task);
         Map<String, AttributeValue> item = new HashMap<>();
+        task.setId(TaskDataUtil.generateUUID(25));
         task.setCreatedAt(ZonedDateTime.now(ZoneId.of(this.zoneId)));
         for (TaskColumnsEnum columnNameEnum : TaskColumnsEnum.values()) {
             if (columnNameEnum.equals(TaskColumnsEnum.TASK_UPDATED_AT_COL)) {
                 continue;
             }
-            item.put(columnNameEnum.columnName(),
-                    TaskDataUtil.getAttributeValueFromTask(columnNameEnum, task));
+            item.put(columnNameEnum.columnName(), TaskDataUtil.getAttributeValueFromTask(columnNameEnum, task));
         }
         LOGGER.debug("getPutItemRequest() - Item values: " + item);
         return PutItemRequest.builder()
