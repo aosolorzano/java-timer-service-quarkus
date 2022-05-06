@@ -10,9 +10,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -98,22 +96,5 @@ public class JobService {
             }
         }
         return trigger;
-    }
-
-    public List<Trigger> findAll() {
-        List<Trigger> triggers = new ArrayList<>();
-        try {
-            for (String groupName : this.scheduler.getJobGroupNames()) {
-                for (JobKey jobKey : this.scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-                    String jobName = jobKey.getName();
-                    TriggerKey triggerKey = TriggerKey.triggerKey(jobName, TaskJobUtil.TASK_TRIGGERS_GROUP);
-                    Trigger trigger = this.scheduler.getTrigger(triggerKey);
-                    triggers.add(trigger);
-                }
-            }
-        } catch (SchedulerException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return triggers;
     }
 }
