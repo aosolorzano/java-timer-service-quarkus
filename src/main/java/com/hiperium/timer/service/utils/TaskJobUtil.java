@@ -7,8 +7,8 @@ import org.jboss.logging.Logger;
 import org.quartz.*;
 
 import java.time.ZoneId;
-import java.util.*;
 import java.util.Calendar;
+import java.util.*;
 
 /**
  * @author Andres Solorzano
@@ -19,7 +19,6 @@ public final class TaskJobUtil {
     public static final String TASK_JOBS_GROUP = "Task#JobsGroup";
     public static final String TASK_TRIGGERS_GROUP = "Task#TriggersGroup";
     public static final String TASK_ID_DATA_KEY = "taskId";
-    public static final String TASK_COMMAND_DATA_KEY = "taskCommand";
 
     private TaskJobUtil() {
     }
@@ -28,7 +27,6 @@ public final class TaskJobUtil {
         return JobBuilder.newJob(TaskJob.class)
                 .withIdentity(task.getId(), TASK_JOBS_GROUP)
                 .usingJobData(TASK_ID_DATA_KEY, task.getId())
-                .usingJobData(TASK_COMMAND_DATA_KEY, task.getExecutionCommand())
                 .build();
     }
 

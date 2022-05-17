@@ -88,13 +88,16 @@ public class JobService {
     }
 
     private Trigger getTrigger(Task task) throws SchedulerException {
+        LOGGER.debug("getTrigger() - START: " + task.getId());
         Trigger trigger = null;
         for (JobKey jobKey : this.scheduler.getJobKeys(GroupMatcher.jobGroupEquals(TaskJobUtil.TASK_JOBS_GROUP))) {
+            LOGGER.debug("Job key name: " + jobKey.getName());
             if (jobKey.getName().equals(task.getId())) {
                 TriggerKey triggerKey = TriggerKey.triggerKey(task.getId(), TaskJobUtil.TASK_TRIGGERS_GROUP);
                 trigger = this.scheduler.getTrigger(triggerKey);
             }
         }
+        LOGGER.debug("getTrigger() - END");
         return trigger;
     }
 }

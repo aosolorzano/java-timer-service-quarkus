@@ -37,7 +37,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
 
     @Override
     public Response toResponse(WebApplicationException exception) {
-        LOGGER.error("Failed to handle the Task request: ", exception);
+        LOGGER.error("Failed to handle the Task request: " + exception.getMessage(), exception);
         String appCode = "ERR-001";
         ObjectNode exceptionJson = TaskExceptionUtil.getExceptionDetail(exception, this.objectMapper, appCode);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

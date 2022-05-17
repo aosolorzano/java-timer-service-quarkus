@@ -36,7 +36,7 @@ public class UnsupportedOperationExceptionMapper implements ExceptionMapper<Unsu
 
     @Override
     public Response toResponse(UnsupportedOperationException exception) {
-        LOGGER.error("Failed to process Task request: ", exception);
+        LOGGER.error("Failed to process Task request: " + exception.getMessage(), exception);
         String appCode = "ERR-005";
         ObjectNode exceptionJson = TaskExceptionUtil.getExceptionDetail(exception, this.objectMapper, appCode);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

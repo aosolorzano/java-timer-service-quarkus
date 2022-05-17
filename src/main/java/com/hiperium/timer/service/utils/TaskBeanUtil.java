@@ -1,11 +1,10 @@
 package com.hiperium.timer.service.utils;
 
-import com.hiperium.timer.service.annotations.ColumnName;
+import com.hiperium.timer.service.annotations.DynamoDbColumnName;
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
 import org.jboss.logging.Logger;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public final class TaskBeanUtil {
         LOGGER.debug("getModifiedFields() - START");
         List<TaskColumnsEnum> changedProperties = new ArrayList<>();
         for (Method method : actualTask.getClass().getDeclaredMethods()) {
-            if (method.getName().startsWith("get") && method.isAnnotationPresent(ColumnName.class)) {
+            if (method.getName().startsWith("get") && method.isAnnotationPresent(DynamoDbColumnName.class)) {
                 Object actualObjectValue;
                 Object updatedObjectValue;
                 try {
@@ -37,8 +36,8 @@ public final class TaskBeanUtil {
                     throw new ReflectiveOperationException(e.getMessage());
                 }
                 if (!Objects.equals(actualObjectValue, updatedObjectValue)) {
-                    ColumnName taskFieldColumnName = method.getAnnotation(ColumnName.class);
-                    changedProperties.add(taskFieldColumnName.name());
+                    DynamoDbColumnName taskFieldDynamoDbColumnName = method.getAnnotation(DynamoDbColumnName.class);
+                    changedProperties.add(taskFieldDynamoDbColumnName.name());
                 }
             }
         }

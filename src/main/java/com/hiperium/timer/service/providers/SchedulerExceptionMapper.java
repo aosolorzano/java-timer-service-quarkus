@@ -37,7 +37,7 @@ public class SchedulerExceptionMapper implements ExceptionMapper<SchedulerExcept
 
     @Override
     public Response toResponse(SchedulerException exception) {
-        LOGGER.error("Failed to handle the Scheduler: ", exception);
+        LOGGER.error("Failed to handle the Scheduler: " + exception.getMessage(), exception);
         String appCode = "ERR-003";
         ObjectNode exceptionJson = TaskExceptionUtil.getExceptionDetail(exception, this.objectMapper, appCode);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

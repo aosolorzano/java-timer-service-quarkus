@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)     // AVAILABLE VIA REFLECTION AT RUNTIME.
-public @interface ColumnName {
+public @interface DynamoDbColumnName {
     TaskColumnsEnum name();
 }
 

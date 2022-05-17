@@ -4,6 +4,7 @@ import com.hiperium.timer.service.common.AbstractTaskService;
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.utils.TaskDataUtil;
 import io.smallrye.mutiny.Uni;
+import org.jboss.logging.Logger;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,6 +17,8 @@ import java.util.List;
 @ApplicationScoped
 public class TaskService extends AbstractTaskService {
 
+    private static final Logger LOGGER = Logger.getLogger(TaskService.class.getName());
+
     @Inject
     DynamoDbAsyncClient dynamoDBClient;
 
@@ -23,6 +26,7 @@ public class TaskService extends AbstractTaskService {
     JobService jobService;
 
     public Uni<Task> create(Task task) {
+        LOGGER.debug("create() - START");
         return Uni.createFrom()
                 .completionStage(() -> this.dynamoDBClient.putItem(
                         super.getPutItemRequest(task)))
@@ -30,6 +34,7 @@ public class TaskService extends AbstractTaskService {
     }
 
     public Uni<Task> update(Task actualTask, Task updatedTask) {
+        LOGGER.debug("update() - START");
         return Uni.createFrom()
                 .completionStage(() -> this.dynamoDBClient.updateItem(
                         super.getUpdateItemRequest(actualTask, updatedTask)))
@@ -37,6 +42,7 @@ public class TaskService extends AbstractTaskService {
     }
 
     public Uni<Task> delete(Task task) {
+        LOGGER.debug("delete() - START");
         return Uni.createFrom()
                 .completionStage(() -> this.dynamoDBClient.deleteItem(
                         super.getDeleteItemRequest(task)))
@@ -44,6 +50,7 @@ public class TaskService extends AbstractTaskService {
     }
 
     public Uni<Task> find(String id) {
+        LOGGER.debug("find() - START");
         return Uni.createFrom()
                 .completionStage(() -> this.dynamoDBClient.getItem(
                         super.getItemRequest(id)))
@@ -51,6 +58,7 @@ public class TaskService extends AbstractTaskService {
     }
 
     public Uni<List<Task>> findAll() {
+        LOGGER.debug("findAll() - START");
         return Uni.createFrom()
                 .completionStage(() -> this.dynamoDBClient.scan(
                         super.getScanRequest()))
@@ -58,5 +66,15 @@ public class TaskService extends AbstractTaskService {
                         .stream()
                         .map(TaskDataUtil::getTaskFromAttributeValues)
                         .toList());
+    }
+
+    public void executeTask(String taskId) {
+        LOGGER.debug("executeTask() - START: " + taskId);
+        Uni.createFrom()
+                .completionStage(() -> this.dynamoDBClient.getItem(
+                        super.getItemRequest(taskId)))
+                .map(itemResponse -> TaskDataUtil.getTaskFromAttributeValues(itemResponse.item()))
+                .invoke(task -> LOGGER.info("Command to execute: " + task.getExecutionCommand()));
+        LOGGER.debug("executeTask() - END");
     }
 }

@@ -36,7 +36,7 @@ public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalAr
 
     @Override
     public Response toResponse(IllegalArgumentException exception) {
-        LOGGER.error("Failed to process Task request: ", exception);
+        LOGGER.error("Failed to process Task request: " + exception.getMessage(), exception);
         String appCode = "ERR-002";
         ObjectNode exceptionJson = TaskExceptionUtil.getExceptionDetail(exception, this.objectMapper, appCode);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

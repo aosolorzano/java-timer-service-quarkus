@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  # TASKS SERVICE
+  tasks:
+    image: aosolorzano/java-timer-service-quarkus:1.0.0-SNAPSHOT
+    environment:
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      AWS_DEFAULT_REGION: us-east-1
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://192.168.59.100:5432/timer_service
+    networks:
+      - tasks-network
+    depends_on:
+      - postgres
+
+  # NGINX SERVICE
+  nginx:
+    image: nginx:latest
+    container_name: nginx-webserver
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - tasks
+    ports:
+      - "80:80"
+    networks:
+      - tasks-network
+
+  # POSTGRESQL SERVICE
+  postgres:
+    image: postgres:13.6  # SUPPORTED VERSION BY AWS AURORA SERVERLESS
+    container_name: timer-service-postgres
+    environment:
+      - POSTGRES_DB=timer_service
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+    ports:
+      - "5432:5432"
+    networks: 
+      - tasks-network
+
+networks:
+  tasks-network:
+    driver: bridge

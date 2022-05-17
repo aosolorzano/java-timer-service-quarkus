@@ -1,6 +1,6 @@
 package com.hiperium.timer.service.model;
 
-import com.hiperium.timer.service.annotations.ColumnName;
+import com.hiperium.timer.service.annotations.DynamoDbColumnName;
 import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 
@@ -14,7 +14,7 @@ import java.util.Objects;
 @RegisterForReflection
 public class Task {
 
-    public static final String TASK_TABLE_NAME = "Task";
+    public static final String DYNAMODB_TABLE_NAME = "Task";
 
     private String id;
     private String name;
@@ -42,7 +42,7 @@ public class Task {
         this.description = description;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_ID_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_ID_COL)
     public String getId() {
         return id;
     }
@@ -51,7 +51,7 @@ public class Task {
         this.id = id;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_NAME_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_NAME_COL)
     public String getName() {
         return name;
     }
@@ -60,7 +60,7 @@ public class Task {
         this.name = name;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_EXEC_COMMAND_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_EXEC_COMMAND_COL)
     public String getExecutionCommand() {
         return executionCommand;
     }
@@ -69,7 +69,7 @@ public class Task {
         this.executionCommand = executionCommand;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_EXEC_UNTIL_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_EXEC_UNTIL_COL)
     public ZonedDateTime getExecuteUntil() {
         return executeUntil;
     }
@@ -78,7 +78,7 @@ public class Task {
         this.executeUntil = executeUntil;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_HOUR_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_HOUR_COL)
     public Integer getHour() {
         return hour;
     }
@@ -87,7 +87,7 @@ public class Task {
         this.hour = hour;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_MINUTE_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_MINUTE_COL)
     public Integer getMinute() {
         return minute;
     }
@@ -96,7 +96,7 @@ public class Task {
         this.minute = minute;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_DAYS_OF_WEEK_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_DAYS_OF_WEEK_COL)
     public List<String> getDaysOfWeek() {
         return daysOfWeek;
     }
@@ -105,7 +105,7 @@ public class Task {
         this.daysOfWeek = daysOfWeek;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_DESCRIPTION_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_DESCRIPTION_COL)
     public String getDescription() {
         return description;
     }
@@ -114,7 +114,7 @@ public class Task {
         this.description = description;
     }
 
-    // @ColumnName not applied here because 'createdAt' field is set manually in DynamoDB.
+    // @DynamoDbColumnName not applied here because 'createdAt' field is set manually in DynamoDB.
     public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
@@ -123,7 +123,7 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    @ColumnName(name = TaskColumnsEnum.TASK_UPDATED_AT_COL)
+    @DynamoDbColumnName(name = TaskColumnsEnum.TASK_UPDATED_AT_COL)
     public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }

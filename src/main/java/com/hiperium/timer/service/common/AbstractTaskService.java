@@ -28,7 +28,7 @@ public abstract class AbstractTaskService {
 
     protected ScanRequest getScanRequest() {
         return ScanRequest.builder()
-                .tableName(Task.TASK_TABLE_NAME)
+                .tableName(Task.DYNAMODB_TABLE_NAME)
                 .attributesToGet(TaskDataUtil.COLUM_NAMES)
                 .build();
     }
@@ -38,7 +38,7 @@ public abstract class AbstractTaskService {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put(TaskColumnsEnum.TASK_ID_COL.columnName(), AttributeValue.builder().s(id).build());
         return GetItemRequest.builder()
-                .tableName(Task.TASK_TABLE_NAME)
+                .tableName(Task.DYNAMODB_TABLE_NAME)
                 .key(key)
                 .attributesToGet(TaskDataUtil.COLUM_NAMES)
                 .build();
@@ -57,7 +57,7 @@ public abstract class AbstractTaskService {
         }
         LOGGER.debug("getPutItemRequest() - Item values: " + item);
         return PutItemRequest.builder()
-                .tableName(Task.TASK_TABLE_NAME)
+                .tableName(Task.DYNAMODB_TABLE_NAME)
                 .item(item)
                 .build();
     }
@@ -89,7 +89,7 @@ public abstract class AbstractTaskService {
         }
         LOGGER.debug("getUpdateItemRequest() - Updated values: " + updatedValues);
         return UpdateItemRequest.builder()
-                .tableName(Task.TASK_TABLE_NAME)
+                .tableName(Task.DYNAMODB_TABLE_NAME)
                 .key(this.getTaskIdItemKey(updatedTask))
                 .attributeUpdates(updatedValues)
                 .build();
@@ -98,7 +98,7 @@ public abstract class AbstractTaskService {
     protected DeleteItemRequest getDeleteItemRequest(Task task) {
         LOGGER.debug("getDeleteItemRequest() - START: " + task.getId());
         return DeleteItemRequest.builder()
-                .tableName(Task.TASK_TABLE_NAME)
+                .tableName(Task.DYNAMODB_TABLE_NAME)
                 .key(this.getTaskIdItemKey(task))
                 .build();
     }

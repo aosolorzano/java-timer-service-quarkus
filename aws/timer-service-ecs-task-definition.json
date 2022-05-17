@@ -1,0 +1,36 @@
+{
+  "family": "timer-service-task",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "runtimePlatform": {
+    "operatingSystemFamily": "LINUX"
+  },
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "timer-service-container",
+      "image": "aws_account_id.dkr.ecr.us-east-1.amazonaws.com/timer-service-repository:timer_service_version",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group" : "/ecs/timer-service",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "essential": true
+    }
+  ],
+  "taskRoleArn": "arn:aws:iam::aws_account_id:role/TimerServiceEcsDynamoDbRole",
+  "executionRoleArn": "arn:aws:iam::aws_account_id:role/ecsTaskExecutionRole"
+}

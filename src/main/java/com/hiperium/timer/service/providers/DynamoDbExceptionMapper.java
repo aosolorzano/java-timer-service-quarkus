@@ -37,7 +37,7 @@ public class DynamoDbExceptionMapper implements ExceptionMapper<DynamoDbExceptio
 
     @Override
     public Response toResponse(DynamoDbException exception) {
-        LOGGER.error("Failed to process the Task on DynamoDB: ", exception);
+        LOGGER.error("Failed to process the Task on DynamoDB: " + exception.getMessage(), exception);
         String appCode = "ERR-004";
         ObjectNode exceptionJson = TaskExceptionUtil.getExceptionDetail(exception, this.objectMapper, appCode);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
