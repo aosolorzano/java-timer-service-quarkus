@@ -20,10 +20,6 @@ then
   time_service_version="1.0.0-SNAPSHOT"
 fi
 
-# Build the image
-docker build -f src/main/docker/Dockerfile.aws.multistage \
-    -t aosolorzano/java-timer-service-quarkus:"$time_service_version" .
-
 # Create ECR repository
 aws ecr create-repository \
   --repository-name timer-service-repository \

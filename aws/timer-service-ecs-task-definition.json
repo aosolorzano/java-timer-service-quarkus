@@ -13,11 +13,29 @@
     {
       "name": "timer-service-container",
       "image": "aws_account_id.dkr.ecr.us-east-1.amazonaws.com/timer-service-repository:timer_service_version",
+      "command": [
+        "./application", "-Dquarkus.profile=aws", "-Dquarkus.http.host=0.0.0.0"
+      ],
+      "entryPoint": [],
       "portMappings": [
         {
           "containerPort": 8080,
           "hostPort": 8080,
           "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "QUARKUS_DATASOURCE_USERNAME",
+          "value": "postgres"
+        },
+        {
+          "name": "QUARKUS_DATASOURCE_PASSWORD",
+          "value": "postgres123"
+        },
+        {
+          "name": "QUARKUS_DATASOURCE_JDBC_URL",
+          "value": "jdbc:postgresql://timer-service-db-cluster.cluster-c393cqt4avmr.us-east-1.rds.amazonaws.com:5432/TimerServiceDB"
         }
       ],
       "logConfiguration": {

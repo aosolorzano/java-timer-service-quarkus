@@ -1,10 +1,10 @@
 ## What is it?
-This project uses Quarkus Framework to generate CRUD operations for Quartz jobs that are stored as Tasks records on AWS DynamoDB.
+This project uses the Quarkus Framework to generate CRUD operations over Tasks records stored on AWS DynamoDB.
 
 ## Detailed project architecture and components
 You can find more detail of the configurations and components coded in this project in the following posts:
-[Reactive Timer Microservice with Java Quartz, DynamoDB and Quarkus](https://aosolorzano.medium.com/reactive-timer-microservice-with-java-quartz-dynamodb-and-quarkus-bb4cf6e0dc23).
-[Deploying Quarkus Native Image Container on AWS Fargate ECS]().
+- [Reactive Timer Microservice with Java Quartz, DynamoDB and Quarkus](https://aosolorzano.medium.com/reactive-timer-microservice-with-java-quartz-dynamodb-and-quarkus-bb4cf6e0dc23).
+- [Deploying Quarkus Native Image Container on AWS Fargate ECS](https://aosolorzano.medium.com/deploying-a-container-image-with-a-quarkus-native-application-on-aws-fargate-ecs-b09141fe7ff4).
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
 
@@ -14,6 +14,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 3. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
 4. GraalVM with OpenJDK 17. You can use [SDKMAN](https://sdkman.io/install).
 5. [Maven](https://maven.apache.org/download.cgi).
+6. Docker and Docker Compose.
 
 ## Running Postgres instance
 First, we need to make sure you have a Postgres instance running (Quarkus automatically starts one for dev and test mode). To set up a PostgreSQL database with Docker:
@@ -75,7 +76,7 @@ You can create a native container image as follows:
 docker build -f src/main/docker/Dockerfile.multistage     \
              -t aosolorzano/java-timer-service-quarkus .
 ```
-> **_IMPORTANT:_** Before execute your docker container, export your AWS credential before to pass them to the "docker run":
+> **_IMPORTANT:_** Before execute the Timer Service container, export your AWS credential to pass them to the "docker run" command:
 ```
 docker-compose up --scale tasks=2 --scale nginx=1
 ```
@@ -116,9 +117,9 @@ You can follow the instruction shown in this [tutorial](https://docs.aws.amazon.
 Also, you need to follow the instructions shown in this [tutorial](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_Configuration.html) to configure the "ecs-cli" command.
 
 ## Related Guides
-- Amazon DynamoDB ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/amazon-dynamodb.html)): Connect to Amazon DynamoDB datastore
-- Quartz ([guide](https://quarkus.io/guides/quartz)): Schedule clustered tasks with Quartz
+- Amazon DynamoDB ([guide](https://quarkiverse.github.io/quarkiverse-docs/quarkus-amazon-services/dev/amazon-dynamodb.html)): Connect to Amazon DynamoDB datastore.
+- Quartz ([guide](https://quarkus.io/guides/quartz)): Schedule clustered tasks with Quartz.
 
 ## RESTEasy Reactive
 Easily start your Reactive RESTful Web Services
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+[Related guide section.](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)

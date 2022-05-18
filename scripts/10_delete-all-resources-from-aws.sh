@@ -19,6 +19,13 @@ then
   timer_service_version="1.0.0-SNAPSHOT"
 fi
 
+read -r -p 'Enter the running task ID from ECS: ' aws_ecs_task_id
+if [ -z "$aws_ecs_task_id" ]
+then
+  echo 'The task ID is required to stop running task from the cluster.'
+  exit 0;
+fi
+
 read -r -p 'Enter the task definition number: ' task_definition_number
 if [ -z "$task_definition_number" ]
 then
@@ -26,16 +33,21 @@ then
   exit 0;
 fi
 
-echo "DELETING CLUSTER SERVICE ..."
-aws ecs delete-service \
-    --cluster timer-service-cluster \
-    --service timer-service \
-    --force \
+echo "STOP RUNNING TASK..."
+aws ecs stop-task \
+    --task "$aws_ecs_task_id" \
     --profile="$aws_profile"
 
 echo "DE-REGISTERING TASK DEFINITION..."
 aws ecs deregister-task-definition \
     --task-definition timer-service-task:"$task_definition_number" \
+    --profile="$aws_profile"
+
+echo "DELETING CLUSTER SERVICE ..."
+aws ecs delete-service \
+    --cluster timer-service-cluster \
+    --service timer-service \
+    --force \
     --profile="$aws_profile"
 
 echo "DELETING CLUSTER..."
@@ -93,9 +105,4 @@ echo "DELETING TIMER SERVICE DOCKER IMAGES..."
 docker rm "$(docker ps --filter status=exited -q)"
 docker container prune
 docker volume prune
-
-# Remove Timer Service Image
-docker rmi aosolorzano/java-timer-service-quarkus:"$timer_service_version"
-
-# Remove Timer Service image for ECR
-docker rmi "$aws_account_id".dkr.ecr.us-east-1.amazonaws.com/timer-service-repository:"$timer_service_version"
+docker system prune

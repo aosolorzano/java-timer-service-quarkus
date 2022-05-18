@@ -8,7 +8,9 @@ services:
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
       AWS_DEFAULT_REGION: us-east-1
-      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://192.168.59.100:5432/timer_service
+      QUARKUS_DATASOURCE_USERNAME: admin
+      QUARKUS_DATASOURCE_PASSWORD: admin123
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://192.168.59.100:5432/TimerServiceDB
     networks:
       - tasks-network
     depends_on:
@@ -16,7 +18,7 @@ services:
 
   # NGINX SERVICE
   nginx:
-    image: nginx:latest
+    image: nginx:1.21.6
     container_name: nginx-webserver
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
@@ -32,7 +34,7 @@ services:
     image: postgres:13.6  # SUPPORTED VERSION BY AWS AURORA SERVERLESS
     container_name: timer-service-postgres
     environment:
-      - POSTGRES_DB=timer_service
+      - POSTGRES_DB=TimerServiceDB
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin123
     ports:

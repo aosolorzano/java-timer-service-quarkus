@@ -14,7 +14,7 @@ then
 fi
 
 # Create a Customer Managed IAM policy to access DynamoDB.
-sed -i'' -e "s/aws_account_id/$aws_account_id/g" ../aws/timer-service-dynamodb-policy.json
+sed -i'.bak' -e "s/aws_account_id/$aws_account_id/g" ../aws/timer-service-dynamodb-policy.json
 aws iam create-policy --policy-name TimerServiceDynamoDBAccessPolicy            \
     --policy-document file://../aws/timer-service-dynamodb-policy.json          \
     --profile "$aws_profile"

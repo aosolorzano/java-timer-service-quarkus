@@ -20,6 +20,12 @@ then
   aws_subnet_id="subnet-042e6673123570f61"
 fi
 
+read -r -p 'Enter the second Subnet ID: [subnet-042e6673123570f61] ' aws_second_subnet_id
+if [ -z "$aws_second_subnet_id" ]
+then
+  aws_second_subnet_id="subnet-042e6673123570f61"
+fi
+
 read -r -p 'Enter the Security Group ID: [sg-012121d2a33ebfe56] ' aws_security_group_id
 if [ -z "$aws_security_group_id" ]
 then
@@ -39,11 +45,47 @@ aws dynamodb create-table --table-name Task \
     --billing-mode PAY_PER_REQUEST \
     --profile="$aws_profile"
 
-echo "EXECUTING PROJECT TESTS..."
-mvn clean test
+echo "CREATING AURORA POSTGRES SERVERLESS..."
+aws rds create-db-subnet-group                                                    \
+    --db-subnet-group-name timer-service-subnet-group                             \
+    --db-subnet-group-description "Subnet group for the Timer Service"            \
+    --subnet-ids '['\""$aws_subnet_id"\"','\""$aws_second_subnet_id"\"']'   \
+    --profile "$aws_profile"
+
+aws ec2 authorize-security-group-ingress    \
+    --group-id "$aws_security_group_id"     \
+    --protocol tcp                          \
+    --port 5432                             \
+    --cidr 0.0.0.0/0                        \
+    --profile "$aws_profile"
+
+aws rds create-db-cluster                                 \
+    --region us-east-1                                    \
+    --engine aurora-postgresql                            \
+    --engine-version 13.6                                 \
+    --db-cluster-identifier timer-service-db-cluster      \
+    --master-username postgres                            \
+    --master-user-password postgres123                    \
+    --serverless-v2-scaling-configuration MinCapacity=8,MaxCapacity=64  \
+    --db-subnet-group-name timer-service-subnet-group     \
+    --vpc-security-group-ids "$aws_security_group_id"     \
+    --port 5432                                           \
+    --database-name TimerServiceDB                        \
+    --backup-retention-period 35                          \
+    --no-storage-encrypted                                \
+    --no-deletion-protection                              \
+    --profile "$aws_profile"
+
+sleep 5
+aws rds create-db-instance                                \
+    --db-instance-identifier timer-service-db-instance    \
+    --db-cluster-identifier timer-service-db-cluster      \
+    --engine aurora-postgresql                            \
+    --db-instance-class db.serverless                     \
+    --profile "$aws_profile"
 
 echo "BUILDING DOCKER IMAGE..."
-docker build -f src/main/docker/Dockerfile.aws.multistage  \
+docker build -f src/main/docker/Dockerfile.multistage  \
   -t aosolorzano/java-timer-service-quarkus:"$timer_service_version" .
 
 echo "CREATING ECR REPOSITORY..."

@@ -20,7 +20,7 @@ then
 fi
 
 # Build the image
-docker build -f src/main/docker/Dockerfile.multistage       \
+docker build -f src/main/docker/Dockerfile.multistage \
     -t aosolorzano/java-timer-service-quarkus:"$time_service_version" .
 
 # Run all containers and scale to 2 instance of Timer Service.

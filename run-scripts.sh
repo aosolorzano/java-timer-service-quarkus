@@ -5,55 +5,54 @@ cd scripts/ || {
   exit 1
 }
 
-function dynamodb_table() {
+function create_dynamodb_table() {
   echo ""
   sh ./1_create-dynamodb-table.sh
 }
 
-function quarkus_app() {
+function create_aurora_postgres_db() {
   echo ""
-  sh ./2_build-and-run-quarkus-app.sh
-}
-
-function quarkus_native_app() {
-  echo ""
-  sh ./3_build-and-run-quarkus-native-app.sh
+  sh ./2_create-aws-aurora-postgres-db.sh
 }
 
 function quarkus_native_container_image() {
   echo ""
-  sh ./4_build-and-run-quarkus-local-native-container.sh
+  sh ./3_build-and-run-quarkus-local-native-container.sh
 }
 
-function build_and_push_quarkus_native_image_to_ecr() {
+function push_quarkus_native_image_to_ecr() {
   echo ""
-  sh ./5_build-and-push-quarkus-native-image-to-ecr.sh
+  sh ./4_push-quarkus-native-image-to-ecr.sh
 }
 
 function timer_services_required_iam_resources() {
   echo ""
-  sh ./6_create-timer-service-iam-roles-and-policies.sh
+  sh ./5_create-timer-service-iam-roles-and-policies.sh
 }
 
 function ecs_required_iam_resources() {
   echo ""
-  sh ./7_create-ecs-task-iam-roles-and-policies.sh
+  sh ./6_create-ecs-task-iam-roles-and-policies.sh
 }
 
-function create_ecs_cluster_and_deploy_timer_service() {
+function create-ecs-cluster-and-log-group() {
   echo ""
-  sh ./8_1-create-ecs-cluster-and-log-group.sh
-  sh ./8_2-create-ecs-task-and-deploy-service.sh
+  sh ./7_create-ecs-cluster-and-log-group.sh
 }
 
-function create_and_deploy_all_resources() {
+function create-ecs-task-and-deploy-service() {
   echo ""
-  sh ./9_create-build-and-deploy-all-resources-to-aws.sh
+  sh ./8_create-ecs-task-and-deploy-service.sh
 }
 
-function delete_resources() {
+function deploy_all_resources() {
   echo ""
-  sh ./10_delete-all-resources.sh
+  sh ./9_deploy-all-resources-to-aws.sh
+}
+
+function delete_all_resources() {
+  echo ""
+  sh ./10_delete-all-resources-from-aws.sh
 }
 
 # Main Menu
@@ -63,57 +62,57 @@ menu() {
   ***** Main Menu *****
   *********************
   1) Create Task table on DynamoDB.
-  2) Build and run Timer Service as Quarkus app.
-  3) Build and run Timer Service as Quarkus native app.
-  4) Build and run Timer Service as Quarkus native image container.
-  5) Build and Push Timer Service native image to AWS ECR.
-  6) Create Timer Service required IAM policies and roles.
-  7) Create ECS Service required IAM policies and roles.
-  8) Create ECS Cluster and deploy the Timer Service.
-  9) Create, build and deploy Timer Service on AWS ECS.
-  d) Delete all created resources on AWS.
+  2) Create Postgres database on Aurora Serverless.
+  3) Build and run Timer Service as Quarkus native image container.
+  4) Push the Timer Service image to AWS ECR.
+  5) Create Timer Service required IAM policies and roles.
+  6) Create ECS Service required IAM policies and roles.
+  7) Create ECS Cluster and Log Group.
+  8) Create ECS Task and deploy the Timer Service.
+  a) Deploy ALL resources on AWS ECS.
+  d) DELETE all resources from AWS.
   e) Exit.
   "
   read -r -p 'Choose an option: ' a
   case $a in
   1)
-    dynamodb_table
+    create_dynamodb_table
     menu
     ;;
   2)
-    quarkus_app
+    create_aurora_postgres_db
     menu
     ;;
   3)
-    quarkus_native_app
-    menu
-    ;;
-  4)
     quarkus_native_container_image
     menu
     ;;
-  5)
-    build_and_push_quarkus_native_image_to_ecr
+  4)
+    push_quarkus_native_image_to_ecr
     menu
     ;;
-  6)
+  5)
     timer_services_required_iam_resources
     menu
     ;;
-  7)
+  6)
     ecs_required_iam_resources
     menu
     ;;
-  8)
-    create_ecs_cluster_and_deploy_timer_service
+  7)
+    create-ecs-cluster-and-log-group
     menu
     ;;
-  9)
-    create_and_deploy_all_resources
+  8)
+    create-ecs-task-and-deploy-service
+    menu
+    ;;
+  a)
+    deploy_all_resources
     menu
     ;;
   d)
-    delete_resources
+    delete_all_resources
     menu
     ;;
   e) exit 0 ;;
