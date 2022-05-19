@@ -16,6 +16,14 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 5. [Maven](https://maven.apache.org/download.cgi).
 6. Docker and Docker Compose.
 
+## Execute preconfigured commands
+You can run all the commands shown in this tutorial through a bash script that allows you to run many grouped commands by activity. You only need to execute:
+```
+./run-scripts.sh
+```
+> **_IMPORTANT:_**  Before running bash scripts, you must modify and export the environment variables located in the file `./scripts/0_export-required-env-variables`. Then, you only need to execute: 
+> `$ source scripts/0_export-required-env-variables`.
+
 ## Running Postgres instance
 First, we need to make sure you have a Postgres instance running (Quarkus automatically starts one for dev and test mode). To set up a PostgreSQL database with Docker:
 ```
@@ -76,7 +84,7 @@ You can create a native container image as follows:
 docker build -f src/main/docker/Dockerfile.multistage     \
              -t aosolorzano/java-timer-service-quarkus .
 ```
-> **_IMPORTANT:_** Before execute the Timer Service container, export your AWS credential to pass them to the "docker run" command:
+> **_IMPORTANT:_**  Before execute the Timer Service container, export your AWS credential to pass them to the "docker run" command:
 ```
 docker-compose up --scale tasks=2 --scale nginx=1
 ```

@@ -1,9 +1,11 @@
 #!/bin/bash
 
-read -r -p 'Enter the aws profile to use: [default] ' aws_profile
-if [ -z "$aws_profile" ]
+# GETTING THE AWS PROFILE NAME FROM ENV VARS
+if [ -z "${AWS_PROFILE}" ]
 then
   aws_profile="default"
+else
+  aws_profile="${AWS_PROFILE}"
 fi
 
 # Create IAM role "ecsTaskExecutionRole".

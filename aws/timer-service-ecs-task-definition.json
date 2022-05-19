@@ -1,5 +1,5 @@
 {
-  "family": "timer-service-task",
+  "family": "timer-service-ecs-task",
   "requiresCompatibilities": [
     "FARGATE"
   ],
@@ -11,8 +11,8 @@
   "memory": "512",
   "containerDefinitions": [
     {
-      "name": "timer-service-container",
-      "image": "aws_account_id.dkr.ecr.us-east-1.amazonaws.com/timer-service-repository:timer_service_version",
+      "name": "timer-service-ecs-container",
+      "image": "aws_account_id.dkr.ecr.us-east-1.amazonaws.com/timer-service-ecr-repository:timer_service_version",
       "command": [
         "./application", "-Dquarkus.profile=aws", "-Dquarkus.http.host=0.0.0.0"
       ],
@@ -35,7 +35,7 @@
         },
         {
           "name": "QUARKUS_DATASOURCE_JDBC_URL",
-          "value": "jdbc:postgresql://timer-service-db-cluster.cluster-c393cqt4avmr.us-east-1.rds.amazonaws.com:5432/TimerServiceDB"
+          "value": "jdbc:postgresql://rds_endpoint_address:5432/TimerServiceDB"
         }
       ],
       "logConfiguration": {
@@ -49,6 +49,6 @@
       "essential": true
     }
   ],
-  "taskRoleArn": "arn:aws:iam::aws_account_id:role/TimerServiceEcsDynamoDbRole",
+  "taskRoleArn": "arn:aws:iam::aws_account_id:role/TimerServiceEcsRole",
   "executionRoleArn": "arn:aws:iam::aws_account_id:role/ecsTaskExecutionRole"
 }
