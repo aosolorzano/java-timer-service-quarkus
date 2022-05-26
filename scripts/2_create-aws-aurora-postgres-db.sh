@@ -19,7 +19,7 @@ fi
 # GETTING THE AWS SUBNET TWO
 if [ -z "${AWS_SUBNET_ID_TWO}" ]
 then
-  aws_subnet_id_two="subnet-042e6673123570f61"
+  aws_subnet_id_two="subnet-0757f1f4cfd403c30"
 else
   aws_subnet_id_two="${AWS_SUBNET_ID_TWO}"
 fi
@@ -67,9 +67,4 @@ aws rds create-db-instance                                \
     --db-cluster-identifier timer-service-db-cluster      \
     --engine aurora-postgresql                            \
     --db-instance-class db.serverless                     \
-    --profile "$aws_profile"
-
-aws rds modify-db-instance                              \
-    --db-instance-identifier timer-service-db-instance  \
-    --publicly-accessible                               \
     --profile "$aws_profile"
