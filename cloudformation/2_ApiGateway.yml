@@ -1,0 +1,111 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name deployed using Copilot.
+    Default: 'timerservice'
+  Env:
+    Type: String
+    Description: The name of the ECS environment deployed using Copilot.
+    Default: 'dev'
+  Service:
+    Type: String
+    Description: The name of the ECS service deployed using Copilot.
+    Default: 'api'
+  Name:
+    Type: String
+    Description: The name of the service being deployed.
+    Default: 'ApiGateway'
+
+Resources:
+  TimerServiceHttpApi:
+    Type: 'AWS::ApiGatewayV2::Api'
+    Properties:
+      Name: !Sub '${App}-${Env}-${Name}'
+      Description: 'The API Gateway for the Timer Service.'
+      ProtocolType: HTTP
+      Version: 'v1'
+      CorsConfiguration:
+        AllowCredentials: true
+        AllowHeaders:
+          - 'Content-Type'
+          - 'Authorization'
+          - 'Accept'
+        AllowMethods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - DELETE
+        AllowOrigins:
+          - 'http://localhost:8100'
+        ExposeHeaders:
+          - 'Date'
+        MaxAge: 172800
+
+  TimerServiceVpcLink:
+    Type: 'AWS::ApiGatewayV2::VpcLink'
+    Properties:
+      Name: !Sub '${App}-${Env}-ApiGatewayVpcLink'
+      SubnetIds:
+        !Split [ ',', { 'Fn::ImportValue': !Sub '${App}-${Env}-PrivateSubnets' } ]
+      SecurityGroupIds: []
+
+  TimerServiceHttpApiIntegration:
+    Type: 'AWS::ApiGatewayV2::Integration'
+    Properties:
+      ApiId: !Ref TimerServiceHttpApi
+      Description: 'HTTP proxy integration for Timer Service API Gateway.'
+      IntegrationType: HTTP_PROXY
+      IntegrationMethod: ANY
+      ConnectionType: VPC_LINK
+      ConnectionId: !Ref TimerServiceVpcLink
+      IntegrationUri:
+        Fn::ImportValue:
+          !Sub '${App}-${Env}-${Service}-DiscoveryServiceARN'
+      PayloadFormatVersion: '1.0'
+
+  TimerServiceHttpApiDefaultRoute:
+    Type: 'AWS::ApiGatewayV2::Route'
+    Properties:
+      ApiId: !Ref TimerServiceHttpApi
+      RouteKey: '$default'
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref TimerServiceHttpApiIntegration
+
+  TimerServiceHttpApiLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      RetentionInDays: 7
+      LogGroupName: !Join
+        - '-'
+        - - !Ref TimerServiceHttpApi
+          - access-logs
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+
+  TimerServiceHttpApiStage:
+    Type: 'AWS::ApiGatewayV2::Stage'
+    Properties:
+      StageName: '$default'
+      Description: 'Development stage for Timer Service API Gateway.'
+      AutoDeploy: true
+      ApiId: !Ref TimerServiceHttpApi
+      AccessLogSettings:
+        DestinationArn: !GetAtt TimerServiceHttpApiLogGroup.Arn
+        Format: >-
+          $context.identity.sourceIp - - [$context.requestTime]
+          "$context.httpMethod $context.routeKey $context.protocol"
+          $context.status $context.responseLength $context.requestId
+          $context.integrationErrorMessage
+
+Outputs:
+  TimerServiceHttpApiId:
+    Value: !Ref TimerServiceHttpApi
+    Export:
+      Name: !Sub '${App}-${Env}-${Name}ID'
+  TimerServiceHttpApiInvokeURL:
+    Value: !Sub 'https://${TimerServiceHttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${App}-${Env}-${Name}Endpoint'

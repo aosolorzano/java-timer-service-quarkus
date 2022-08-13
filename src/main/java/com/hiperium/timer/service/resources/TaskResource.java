@@ -56,6 +56,7 @@ public class TaskResource {
 
     @DELETE
     @Path("{id}")
+    @Consumes(MediaType.TEXT_PLAIN)
     public Uni<Response> delete(@PathParam("id") String id) {
         LOGGER.debug("delete() - START: " + id);
         if (Objects.isNull(id) || id.isEmpty()) {

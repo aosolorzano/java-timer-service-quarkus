@@ -3,20 +3,13 @@ package com.hiperium.timer.service.services;
 import com.hiperium.timer.service.common.AbstractTaskService;
 import com.hiperium.timer.service.model.Task;
 import com.hiperium.timer.service.utils.TaskDataUtil;
-import com.hiperium.timer.service.utils.enums.TaskColumnsEnum;
 import io.smallrye.mutiny.Uni;
 import org.jboss.logging.Logger;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Andres Solorzano

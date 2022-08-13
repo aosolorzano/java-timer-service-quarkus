@@ -1,0 +1,73 @@
+# IMPORTANT:
+# AWS Copilot always requires the App, Env, and Name parameters to be defined in your template.
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+
+Resources:
+  Task:
+    Metadata:
+      'aws:copilot:description': 'An Amazon DynamoDB table for Task'
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Task
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: "S"
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  TaskAccessPolicy:
+    Metadata:
+      'aws:copilot:description': 'An IAM ManagedPolicy for your service to access the Task db'
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub
+        - Grants CRUD access to the Dynamo DB table ${Table}
+        - { Table: !Ref Task }
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: DDBActions
+            Effect: Allow
+            Action:
+              - dynamodb:BatchGet*
+              - dynamodb:DescribeStream
+              - dynamodb:DescribeTable
+              - dynamodb:Get*
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchWrite*
+              - dynamodb:Create*
+              - dynamodb:Delete*
+              - dynamodb:Update*
+              - dynamodb:PutItem
+            Resource: !Sub ${Task.Arn}
+          - Sid: DDBLSIActions
+            Action:
+              - dynamodb:Query
+              - dynamodb:Scan
+            Effect: Allow
+            Resource: !Sub ${Task.Arn}/index/*
+
+Outputs:
+  # 1. You need to output the IAM ManagedPolicy so that Copilot can add it as a managed policy to your ECS task role.
+  TaskAccessPolicy:
+    Description: "The IAM::ManagedPolicy to attach to the task role."
+    Value: !Ref TaskAccessPolicy
+
+  # 2. If you want to inject a property of your resource as an env var to your ECS task,
+  # then you need to define an output for it.
+  # The output TableTaskName will be injected in capital snake case, TABLE_TASK_NAME, to your task.
+  TableTaskName:
+    Description: "The name of this DynamoDB."
+    Value: !Ref Task
