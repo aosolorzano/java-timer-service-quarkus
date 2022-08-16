@@ -45,7 +45,7 @@ fi
 # GETTING THE TIMER SERVICE VERSION
 if [ -z "${TIMER_SERVICE_VERSION}" ]
 then
-  timer_service_version="1.0.0-SNAPSHOT"
+  timer_service_version="1.0.0"
 else
   timer_service_version="${TIMER_SERVICE_VERSION}"
 fi

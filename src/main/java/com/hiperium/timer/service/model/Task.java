@@ -14,8 +14,6 @@ import java.util.Objects;
 @RegisterForReflection
 public class Task {
 
-    public static final String DYNAMODB_TABLE_NAME = "Task";
-
     private String id;
     private String name;
     private Integer hour;

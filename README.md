@@ -16,25 +16,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 5. [Maven](https://maven.apache.org/download.cgi).
 6. Docker and Docker Compose.
 
-## Execute preconfigured commands
-You can run all the commands shown in this tutorial through a bash script that allows you to run many grouped commands by activity. You only need to execute:
-```
-./run-scripts.sh
-```
-> **_IMPORTANT:_**  Before running bash scripts, you must modify and export the environment variables located in the file `./scripts/0_export-required-env-variables`. Then, you only need to execute: 
-> `$ source scripts/0_export-required-env-variables`.
-
-## Running Postgres instance
-First, we need to make sure you have a Postgres instance running (Quarkus automatically starts one for dev and test mode). To set up a PostgreSQL database with Docker:
-```
-docker-compose up postgres
-```
-Connection properties for the Agroal datasource, and Quartz are defined in the standard Quarkus configuration file,
-`src/main/resources/application.properties`.
-
 ## Live coding with Quarkus
-The Maven Quarkus plugin provides a development mode that supports
-live coding. To try this out:
+The Maven Quarkus plugin provides a development mode that supports live coding. To try this out:
 ```
 mvn clean compile quarkus:dev
 ```
@@ -74,21 +57,17 @@ mvn package -Pnative -Dquarkus.native.container-build=true
 ```
 You can then execute your native executable with: 
 ```
-./target/java-timer-service-quarkus-1.0.0-SNAPSHOT-runner
+./target/java-timer-service-quarkus-1.0.0-runner
 ```
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
 ## Creating a native container image for local environment
 You can create a native container image as follows:
 ```
-docker build -f src/main/docker/Dockerfile.multistage     \
-             -t aosolorzano/java-timer-service-quarkus .
+docker-compose build
+docker-compose up
 ```
-> **_IMPORTANT:_**  Before execute the Timer Service container, export your AWS credential to pass them to the "docker run" command:
-```
-docker-compose up --scale tasks=2 --scale nginx=1
-```
-This starts 2 instances of the application alongside 1 instance of the nginx load balancer.
+This starts 2 instances of the Timer Service container alongside 1 instance of the rest of the containers.
 
 ## Timer Service interaction
 You need to know th IP of your Docker daemon. In the case that you are using Minikube (like me), you can get your internal docker IP with the following command:
@@ -99,10 +78,12 @@ With this IP, you can use the Postman tool to send HTTP requests to our Timer Se
 
 ## Deploying ALL resources to AWS
 Execute the following script located at project's root folder:
+> **_IMPORTANT:_**  Before running bash scripts, you must modify and export the environment variables located in the file `./scripts/0_export-required-env-variables`. Then, you only need to execute:
+> `$ source scripts/0_export-required-env-variables`.
 ```
 ./run-scripts
 ```
-This script will show you an option's menu where you can select the options to deploy the Timer Service on AWS.
+This script will show you an option's menu where you can select the tasks to deploy the Timer Service on your AWS account.
 
 ## Commands to get the public IP address of your Timer Service on ECS
 ```

@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Andres Solorzano
@@ -23,12 +24,21 @@ public abstract class AbstractTaskService {
 
     private static final HashMap<String, AttributeValue> TASK_ITEM_KEY = new HashMap<>();
 
+    private static String dynamodbTableName = "Task";
+
     @ConfigProperty(name = "task.time.zone.id")
     protected String zoneId;
 
+    static {
+        String dynamoTable = System.getenv("TABLE_TASK_NAME");
+        if (Objects.nonNull(dynamoTable) && !dynamoTable.isBlank()) {
+            dynamodbTableName = dynamoTable;
+        }
+    }
+
     protected ScanRequest getScanRequest() {
         return ScanRequest.builder()
-                .tableName(Task.DYNAMODB_TABLE_NAME)
+                .tableName(dynamodbTableName)
                 .attributesToGet(TaskDataUtil.COLUM_NAMES)
                 .build();
     }
@@ -38,7 +48,7 @@ public abstract class AbstractTaskService {
         Map<String, AttributeValue> key = new HashMap<>();
         key.put(TaskColumnsEnum.TASK_ID_COL.columnName(), AttributeValue.builder().s(id).build());
         return GetItemRequest.builder()
-                .tableName(Task.DYNAMODB_TABLE_NAME)
+                .tableName(dynamodbTableName)
                 .key(key)
                 .attributesToGet(TaskDataUtil.COLUM_NAMES)
                 .build();
@@ -57,7 +67,7 @@ public abstract class AbstractTaskService {
         }
         LOGGER.debug("getPutItemRequest() - Item values: " + item);
         return PutItemRequest.builder()
-                .tableName(Task.DYNAMODB_TABLE_NAME)
+                .tableName(dynamodbTableName)
                 .item(item)
                 .build();
     }
@@ -89,7 +99,7 @@ public abstract class AbstractTaskService {
         }
         LOGGER.debug("getUpdateItemRequest() - Updated values: " + updatedValues);
         return UpdateItemRequest.builder()
-                .tableName(Task.DYNAMODB_TABLE_NAME)
+                .tableName(dynamodbTableName)
                 .key(this.getTaskIdItemKey(updatedTask))
                 .attributeUpdates(updatedValues)
                 .build();
@@ -98,7 +108,7 @@ public abstract class AbstractTaskService {
     protected DeleteItemRequest getDeleteItemRequest(Task task) {
         LOGGER.debug("getDeleteItemRequest() - START: " + task.getId());
         return DeleteItemRequest.builder()
-                .tableName(Task.DYNAMODB_TABLE_NAME)
+                .tableName(dynamodbTableName)
                 .key(this.getTaskIdItemKey(task))
                 .build();
     }
